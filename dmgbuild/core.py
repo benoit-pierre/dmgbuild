@@ -549,9 +549,11 @@ def build_dmg(filename, volume_name, settings_file=None, settings={},
         hdiutil('detach', '-force', device, plist=False)
         raise
 
-    ret, output = hdiutil('detach', device, plist=False)
-
-    if ret:
+    for _ in range(5):
+        ret, output = hdiutil('detach', device, plist=False)
+        if not ret:
+            break
+    else:
         hdiutil('detach', '-force', device, plist=False)
         raise DMGError('Unable to detach device cleanly')
 
